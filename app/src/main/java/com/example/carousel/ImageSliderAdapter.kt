@@ -17,7 +17,7 @@ class ImageSliderAdapter(private val items: MutableList<String>) :
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            scaleType = ImageView.ScaleType.CENTER_CROP // 🔹 图片铺满
+            scaleType = ImageView.ScaleType.FIT_CENTER // 🔹 保证图片按原来的比例展示
         }
         return ViewHolder(imageView)
     }

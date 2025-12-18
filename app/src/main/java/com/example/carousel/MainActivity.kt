@@ -3,6 +3,8 @@ package com.example.carousel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +29,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 设置全屏，隐藏状态栏
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         setContentView(R.layout.activity_main)
+
+        // 隐藏 ActionBar
+        supportActionBar?.hide()
+
+        // 隐藏导航栏并实现沉浸式效果
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
         viewPager = findViewById(R.id.viewPager)
 
@@ -101,9 +115,6 @@ class MainActivity : AppCompatActivity() {
             loadedImages = loadCachedImages()
         }
 
-        // 去掉右侧多余图片
-        loadedImages = loadedImages.filter { !it.contains("banner") && !it.contains("android") }
-
         if (loadedImages.isNotEmpty()) {
             // 无限循环 Adapter 需要前后各加一张
             val loopedList = mutableListOf<String>()
@@ -127,6 +138,11 @@ class MainActivity : AppCompatActivity() {
 
     /** 网络加载图片 */
     private suspend fun fetchImages(baseUrl: String): List<String> = withContext(Dispatchers.IO) {
+        // 清除旧的缓存
+        cacheDir.listFiles()?.forEach { file ->
+            file.delete()
+        }
+
         val list = mutableListOf<String>()
         var index = 1
         while (true) {
