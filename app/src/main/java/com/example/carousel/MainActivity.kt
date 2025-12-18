@@ -143,8 +143,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         val list = mutableListOf<String>()
-        val apiUrl = "http://artlocal.lzz.asia/art/api/gallery_info"
-        
+        // 🔹 在模拟器中访问宿主机（电脑）的 127.0.0.1 请使用 10.0.2.2
+        var apiUrl = "http://artlocal.lzz.asia/art/api/gallery_info"
+//        val apiUrl = "http://10.0.2.2:8787/art/api/gallery_info"
+
         try {
             val url = URL(apiUrl)
             val conn = url.openConnection() as HttpURLConnection
@@ -169,11 +171,13 @@ class MainActivity : AppCompatActivity() {
                 if (urlsArray != null) {
                     for (i in 0 until urlsArray.length()) {
                         val imgUrl = urlsArray.getString(i)
-                        list.add(imgUrl)
+                        // 如果图片 URL 也是 127.0.0.1，同样需要替换为 10.0.2.2
+                        val formattedUrl = imgUrl.replace("127.0.0.1", "10.0.2.2")
+                        list.add(formattedUrl)
                         // 打印获取到的url
-                        Log.d("MainActivity", "Fetched URL [$i]: $imgUrl")
+                        Log.d("MainActivity", "Fetched URL [$i]: $formattedUrl")
                         // 保存到缓存
-                        saveImageToCache(imgUrl, "img_$i.jpg")
+                        saveImageToCache(formattedUrl, "img_$i.jpg")
                     }
                 }
             } else {
